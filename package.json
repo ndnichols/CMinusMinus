@@ -1,0 +1,8 @@
+{
+  "name": "cmm",
+  "version": "0.0.1",
+  "dependencies": {
+    "escodegen": "^1.4.1",
+    "jison": "^0.4.15"
+  }
+}

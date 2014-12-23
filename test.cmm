@@ -1,0 +1,15 @@
+void swap(int *a, int *b) {
+    int c = *b;
+    *b = *a;
+    *a = c;
+}
+
+int main()
+{
+  int big = 42;
+  int small = 19;
+  int result = ((6 + 8) * 2);
+  swap(&small, &big);
+  printf("Big is %d and small is %d and result is %d", big, small, result);
+  return 0;
+}

@@ -28,7 +28,7 @@ program
 
 statement_list
     : statement_list statement
-       { $$ = $statement_list; $$.unshift($statement); }
+       { $$ = $statement_list; $$.push($statement); }
     | statement
        { $$ = [$statement]; }
     | function_declaration
@@ -37,16 +37,26 @@ statement_list
 
 arg_list
     : arg_list COMMA declaration
-       { $$ = $arg_list; $$.unshift($declaration); }
+       { $$ = $arg_list; $$.push($declaration); }
     | declaration
         { $$ = [$1]; }
     ;
+
+val_list
+    : val_list COMMA value
+       { $$ = $val_list; $$.push($value); }
+    | value
+        { $$ = [$1]; }
+    ;
+
 
 statement
     : declaration EQUAL value SEMI
         { $$ = {"nodeType": "Assignment", lhs: $1, rhs: $3};}
     | declaration SEMI
         { $$ = $1; }
+    | VAR LP val_list RP SEMI
+        { $$ = {nodeType: "FuncCall", name: $1, args: $3};}
     ;
 
 value
@@ -77,3 +87,4 @@ block
     : LB statement_list RB
         { $$ = {nodeType: "block", statements: $2}}
     ;
+

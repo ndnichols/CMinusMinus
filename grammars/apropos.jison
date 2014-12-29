@@ -10,6 +10,8 @@
 "="                   return 'EQUAL'
 "("                   return 'LP'
 ")"                   return 'RP'
+"{"                   return 'LB'
+"}"                   return 'RB'
 ","                   return 'COMMA'
 <<EOF>>               return 'EOF'
 
@@ -67,7 +69,11 @@ declaration
     ;
 
 function_declaration
-    : TYPE VAR LP arg_list RP
-        { $$ = {nodeType: "functionDeclaration", name: $2, arg_list: $4}}
+    : TYPE VAR LP arg_list RP block
+        { $$ = {nodeType: "functionDeclaration", name: $2, arg_list: $4, block: $6}}
     ;
 
+block
+    : LB statement_list RB
+        { $$ = {nodeType: "block", statements: $2}}
+    ;

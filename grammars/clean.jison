@@ -28,7 +28,7 @@ statement_list
 
 statement
     : e SEMI
-        { return {"nodeType": "Statement", "expression": $1};}
+        { $$ = {"nodeType": "Statement", "expression": $1};}
     ;
 
 e

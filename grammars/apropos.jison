@@ -3,9 +3,11 @@
 
 \s+                   /* skip whitespace */
 [0-9]+("."[0-9]+)?\b  return 'NUMBER'
-(int|float)                 return 'TYPE'
+(int|float)           return 'TYPE'
 \w+                   return 'VAR'
 ";"                   return 'SEMI'
+"*"                   return 'STAR'
+"="                   return 'EQUAL'
 <<EOF>>               return 'EOF'
 
 /lex
@@ -23,15 +25,26 @@ statement_list
     : statement_list statement
        { $$ = $statement_list; $$.unshift($statement); }
     | statement
-        { $$ = [$statement]; }
+       { $$ = [$statement]; }
     ;
 
 statement
-    : e SEMI
-        { return {"nodeType": "Statement", "expression": $1};}
+    : declaration EQUAL value SEMI
+        { $$ = {"nodeType": "Assignment", lhs: $1, rhs: $3};}
+    | declaration SEMI
+        { $$ = $1; }
     ;
 
-e
+value
+    : VAR
+        { $$ = {nodeType: "variable", value: $1}; }
+    | STAR VAR
+        { $$ = {nodeType: "pointer", value: $2}; }
+    | NUMBER
+        { $$ = {nodeType: "number", value: $1}; }
+    ;
+
+declaration
     : TYPE VAR
-        {$$ = {nodeType:"Declaration", type: $1, name: $2}}
+        { $$ = {nodeType: "declaration", type: $1, name: $2};}
     ;

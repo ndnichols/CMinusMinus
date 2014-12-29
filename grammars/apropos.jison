@@ -3,11 +3,14 @@
 
 \s+                   /* skip whitespace */
 [0-9]+("."[0-9]+)?\b  return 'NUMBER'
-(int|float)           return 'TYPE'
+(int|float|void)           return 'TYPE'
 \w+                   return 'VAR'
 ";"                   return 'SEMI'
 "*"                   return 'STAR'
 "="                   return 'EQUAL'
+"("                   return 'LP'
+")"                   return 'RP'
+","                   return 'COMMA'
 <<EOF>>               return 'EOF'
 
 /lex
@@ -26,6 +29,15 @@ statement_list
        { $$ = $statement_list; $$.unshift($statement); }
     | statement
        { $$ = [$statement]; }
+    | function_declaration
+        { $$ = $1; }
+    ;
+
+arg_list
+    : arg_list COMMA declaration
+       { $$ = $arg_list; $$.unshift($declaration); }
+    | declaration
+        { $$ = [$1]; }
     ;
 
 statement
@@ -36,15 +48,26 @@ statement
     ;
 
 value
-    : VAR
-        { $$ = {nodeType: "variable", value: $1}; }
-    | STAR VAR
-        { $$ = {nodeType: "pointer", value: $2}; }
+    : variable
+        { $$ = $1; }
     | NUMBER
         { $$ = {nodeType: "number", value: $1}; }
     ;
 
+variable
+    : VAR
+        { $$ = {nodeType: "variable", value: $1}; }
+    | STAR VAR
+        { $$ = {nodeType: "pointer", value: $2}; }
+    ;
+
 declaration
-    : TYPE VAR
+    : TYPE variable
         { $$ = {nodeType: "declaration", type: $1, name: $2};}
     ;
+
+function_declaration
+    : TYPE VAR LP arg_list RP
+        { $$ = {nodeType: "functionDeclaration", name: $2, arg_list: $4}}
+    ;
+

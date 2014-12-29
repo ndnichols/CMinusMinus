@@ -38,6 +38,18 @@
 %% /* language grammar
 */
 
+program
+    : statement_list EOF
+        {return $statement_list}
+    ;
+
+statement_list
+    : statement_list statement
+       { $$ = $var_list; $$.unshift($var); }
+    | statement
+        { $$ = [$var]; }
+    ;
+
 statement
     : e SEMI
         { return {"type": "Program", "body": [{"type": "ExpressionStatement", "expression":$1}]};}

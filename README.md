@@ -14,9 +14,14 @@ Oh, loads.
 * Type-checking throws false negatives and positives
 * No arrays, loops, conditionals, #includes, etc.
 * No tests
+* Etc.
 
 ## Usage
 
 1. `npm install`
 2. `jison grammars/main.jison -o parser.js`
 3. `node lib/cmm.js test.cmm`
+
+## Contributions
+
+Are very welcome!
